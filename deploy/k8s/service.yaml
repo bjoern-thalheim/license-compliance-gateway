@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: license-compliance-gateway
+  labels:
+    app.kubernetes.io/name: license-compliance-gateway
+spec:
+  selector:
+    app.kubernetes.io/name: license-compliance-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

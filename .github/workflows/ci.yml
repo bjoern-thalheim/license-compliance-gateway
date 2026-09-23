@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.27"
+      - run: uv sync --all-groups
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run pytest -q
+
+  compliance-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.27"
+      - run: uv sync --all-groups
+      # Dogfooding: das Tool prüft die eigenen Abhängigkeiten.
+      - name: SBOM des Projekts erzeugen
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
+            | sh -s -- -b "$RUNNER_TEMP/bin" v1.14.0
+          "$RUNNER_TEMP/bin/syft" dir:. -o cyclonedx-json > sbom.cdx.json
+      - name: Compliance-Paket bauen
+        run: |
+          uv run lcg build \
+            -s sbom.cdx.json \
+            -p examples/policy.yaml \
+            -d examples/decisions \
+            --license-texts examples/license-texts \
+            -o dist/compliance \
+            --no-fail-on-error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compliance-package
+          path: dist/compliance
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t license-compliance-gateway:ci .
+      - name: Smoke-Test des Service
+        run: |
+          docker run -d --rm --name lcg -p 8000:8000 license-compliance-gateway:ci
+          for _ in $(seq 30); do
+            curl -sf localhost:8000/healthz && break
+            sleep 1
+          done
+          curl -sf localhost:8000/healthz
+          docker stop lcg

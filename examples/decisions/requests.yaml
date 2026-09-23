@@ -1,0 +1,9 @@
+# Entscheidung für eine Bibliothek mit Mehrfachlizenzierung.
+component: "pkg:pypi/dual-licensed-lib@2.1.0"
+expression: "MIT OR Apache-2.0"
+chosen: "MIT"
+rationale: >
+  MIT ist die einfachere Variante und für die proprietäre Auslieferung
+  ausreichend; Patentklausel von Apache-2.0 wird nicht benötigt.
+decided_by: "bjoern"
+decided_at: 2026-09-23

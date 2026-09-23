@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Compliance-Report – {{ report.policy_name }}</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 70rem; color: #111; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+  th, td { border: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+  th { background: #f4f4f5; }
+  .verdict { font-size: 1.2rem; padding: 0.8rem 1rem; border-radius: 0.4rem; }
+  .passed { background: #e7f6ec; border: 1px solid #1a7f37; }
+  .failed { background: #fdeceb; border: 1px solid #b42318; }
+  .error { color: #b42318; font-weight: 600; }
+  .warning { color: #9a6700; }
+  .info { color: #555; }
+  code { background: #f4f4f5; padding: 0 0.2rem; }
+</style>
+</head>
+<body>
+<h1>Compliance-Report</h1>
+
+<p class="verdict {{ 'passed' if report.passed else 'failed' }}">
+  {{ "Prüfung bestanden" if report.passed else "Prüfung fehlgeschlagen" }}
+  – {{ report.errors | length }} Fehler, {{ report.warnings | length }} Warnungen
+</p>
+
+<table>
+  <tr><th>Policy</th><td>{{ report.policy_name }} (v{{ report.policy_version }})</td></tr>
+  <tr><th>Tool-Version</th><td>{{ report.tool_version }}</td></tr>
+  <tr><th>Erzeugt am</th><td>{{ report.generated_at }}</td></tr>
+  <tr><th>SBOM SHA-256</th><td><code>{{ report.sbom_sha256 }}</code></td></tr>
+  <tr><th>Komponenten</th><td>{{ report.components | length }}</td></tr>
+</table>
+
+<h2>Befunde</h2>
+{% if report.findings %}
+<table>
+  <tr><th>Schwere</th><th>Code</th><th>Komponente</th><th>Meldung</th><th>Hinweis</th></tr>
+  {% for finding in report.findings %}
+  <tr>
+    <td class="{{ finding.severity }}">{{ finding.severity }}</td>
+    <td><code>{{ finding.code }}</code></td>
+    <td>{{ finding.component }}</td>
+    <td>{{ finding.message }}</td>
+    <td>{{ finding.hint }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Keine Befunde.</p>
+{% endif %}
+
+<h2>Bibliotheken und Lizenzen</h2>
+<table>
+  <tr><th>Bibliothek</th><th>Deklariert</th><th>Effektiv</th><th>Entscheidung</th><th>Attribution</th></tr>
+  {% for item in report.components | sort(attribute="component.name") %}
+  <tr>
+    <td>{{ item.component.display }}<br><code>{{ item.component.purl }}</code></td>
+    <td>{{ item.normalized_expression or item.component.license_expression or "–" }}</td>
+    <td>{{ item.effective_licenses | join(" AND ") or "–" }}</td>
+    <td>
+      {% if item.decision %}{{ item.decision.chosen }} ({{ item.decision.decided_by or "?" }})
+      {% elif item.needs_decision %}<span class="error">erforderlich</span>
+      {% else %}–{% endif %}
+    </td>
+    <td>{{ "ja" if attributions.get(item.component.key) else "–" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</body>
+</html>

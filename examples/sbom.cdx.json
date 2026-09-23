@@ -1,0 +1,52 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:7c1f3c4e-9a1e-4c6e-9f4e-2c0a1f5d8b11",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "demo-app",
+      "version": "1.0.0"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "simple-lib",
+      "version": "1.4.2",
+      "purl": "pkg:pypi/simple-lib@1.4.2",
+      "copyright": "Copyright (c) 2024 Simple Lib Authors",
+      "licenses": [{ "license": { "id": "MIT" } }]
+    },
+    {
+      "type": "library",
+      "name": "dual-licensed-lib",
+      "version": "2.1.0",
+      "purl": "pkg:pypi/dual-licensed-lib@2.1.0",
+      "copyright": "Copyright (c) 2023 Dual Authors",
+      "licenses": [{ "expression": "MIT OR Apache-2.0" }]
+    },
+    {
+      "type": "library",
+      "name": "combined-lib",
+      "version": "0.9.0",
+      "purl": "pkg:pypi/combined-lib@0.9.0",
+      "copyright": "Copyright (c) 2022 Combined Authors",
+      "licenses": [
+        { "license": { "id": "MIT" } },
+        { "license": { "id": "BSD-3-Clause" } }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "legacy-lib",
+      "version": "0.1.0",
+      "purl": "pkg:pypi/legacy-lib@0.1.0",
+      "licenses": [{ "license": { "name": "Apache 2.0" } }],
+      "externalReferences": [
+        { "type": "website", "url": "https://example.org/legacy-lib" }
+      ]
+    }
+  ]
+}
