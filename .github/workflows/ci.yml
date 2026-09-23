@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v6
         with:
-          version: "0.4.27"
+          version: "0.12.18"
       - run: uv sync --all-groups
       - run: uv run ruff check .
       - run: uv run ruff format --check .
@@ -23,9 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v6
         with:
-          version: "0.4.27"
+          version: "0.12.18"
       - run: uv sync --all-groups
       # Dogfooding: das Tool prüft die eigenen Abhängigkeiten.
       - name: SBOM des Projekts erzeugen
