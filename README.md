@@ -47,8 +47,13 @@ Nur [uv](https://docs.astral.sh/uv/) (Python 3.12 holt uv selbst):
 curl -LsSf https://astral.sh/uv/install.sh | sh
 cd license-compliance-gateway
 uv sync --all-groups          # legt .venv an und installiert alles inkl. Testtools
-uv run lcg --help
+uv run lcg --help             # Optionen je Befehl: uv run lcg check --help
 ```
+
+Hinter einer Firmen-Proxy-/TLS-Inspection scheitern die Downloads mit
+`invalid peer certificate: UnknownIssuer`. Dann uv den Zertifikatsspeicher des
+Betriebssystems nutzen lassen: `UV_NATIVE_TLS=true` setzen bzw. die Befehle mit
+`--system-certs` aufrufen.
 
 ### 1. Prüfung, die fehlschlägt
 

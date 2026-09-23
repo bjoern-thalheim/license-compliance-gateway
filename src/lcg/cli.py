@@ -20,9 +20,18 @@ from lcg.resolve import resolve
 from lcg.sbom import SbomError, components_of, load_sbom
 from lcg.version import __version__
 
+EPILOG = (
+    "Beispiele:\n\n"
+    "  lcg check -s sbom.cdx.json -p policy.yaml -d decisions/\n\n"
+    "  lcg build -s sbom.cdx.json -p policy.yaml -d decisions/ "
+    "--license-texts license-texts/ -o dist/compliance\n\n"
+    "Optionen eines Befehls: lcg <befehl> --help"
+)
+
 app = typer.Typer(
     add_completion=False,
     help="Erzeugt ein auslieferbares Compliance-Paket aus einer CycloneDX-SBOM.",
+    epilog=EPILOG,
 )
 
 SbomOption = Annotated[Path, typer.Option("--sbom", "-s", help="CycloneDX-SBOM (JSON).")]
@@ -36,20 +45,31 @@ StrictOption = Annotated[
 ]
 
 
-@app.command()
+@app.command(
+    epilog="Beispiel: lcg check -s sbom.cdx.json -p policy.yaml -d decisions/",
+)
 def check(
     sbom: SbomOption,
     policy: PolicyOption,
     decisions: DecisionsOption = None,
     strict: StrictOption = False,
 ) -> None:
-    """Prüft die SBOM gegen die Policy. Exit-Code 1 bei Verstößen."""
+    """Prüft die SBOM gegen die Policy. Exit-Code 1 bei Verstößen.
+
+    Komponenten mit Mehrfachlizenz (z. B. "MIT OR Apache-2.0") gelten erst als
+    konform, wenn --decisions eine dokumentierte Entscheidung dazu enthält.
+    """
     report = _run_check(sbom, policy, decisions)
     _print_findings(report)
     raise typer.Exit(_exit_code(report, strict))
 
 
-@app.command()
+@app.command(
+    epilog=(
+        "Beispiel: lcg build -s sbom.cdx.json -p policy.yaml -d decisions/ "
+        "--license-texts license-texts/ -o dist/compliance"
+    ),
+)
 def build(
     sbom: SbomOption,
     policy: PolicyOption,
@@ -72,7 +92,12 @@ def build(
         ),
     ] = True,
 ) -> None:
-    """Erzeugt das vollständige Compliance-Paket."""
+    """Erzeugt das vollständige Compliance-Paket.
+
+    Schreibt SBOM, angereicherte SBOM, Third-Party-Notices, Lizenztexte,
+    dokumentierte Entscheidungen, JSON-/HTML-Report und ein SHA-256-Manifest
+    in das Zielverzeichnis.
+    """
     inputs = PackInputs(
         sbom=sbom,
         policy=policy,
