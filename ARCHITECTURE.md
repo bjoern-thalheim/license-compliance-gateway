@@ -34,15 +34,15 @@ license-texts/   ->   collect.py    Sammeln       ->  Texte, Attributionen
 
 ## Der Weg einer SBOM durch `lcg check`
 
-Einstieg: `check()` in <code>src/lcg/cli.py</code>. Der eigentliche Ablauf steht in
+Einstieg: `check()` in `src/lcg/cli.py`. Der eigentliche Ablauf steht in
 `_run_check()` – fünf Zeilen, die der Reihe nach die Module aufrufen:
 
 ```python
-document, digest   = load_sbom(sbom)          # sbom.py
-loaded_policy      = load_policy(policy)      # config.py
-loaded_decisions   = load_decisions(decisions)# config.py
-resolved           = resolve(components_of(document), loaded_decisions)  # resolve.py
-return evaluate(resolved, loaded_policy, sbom_sha256=digest)             # evaluate.py
+document, digest = load_sbom(sbom)  # sbom.py
+loaded_policy = load_policy(policy)  # config.py
+loaded_decisions = load_decisions(decisions)  # config.py
+resolved = resolve(components_of(document), loaded_decisions)  # resolve.py
+return evaluate(resolved, loaded_policy, sbom_sha256=digest)  # evaluate.py
 ```
 
 Danach druckt `_print_findings()` die Findings und `_exit_code()` bestimmt den
@@ -108,7 +108,7 @@ spezifischste – `_specificity()` bewertet exakte purl (10000) vor
 Das ist die einzige Stelle mit Regelwerk. `_check_component()` gibt die
 Reihenfolge vor, und die Reihenfolge ist die Regel:
 
-```python
+```text
 1. denied_components   -> sofort Fehler, Rest wird nicht mehr geprüft
 2. allowed_components  -> Ausnahme: Komponente ist fertig, keine Lizenzprüfung
 3. _check_expression        -> license_missing / license_unparseable
