@@ -238,8 +238,10 @@ docker run --rm -v "$PWD:/work" -w /work license-compliance-gateway:0.1.0 \
 
 ## Code verstehen
 
-Jedes Modul ist ein Schritt der Pipeline und hat genau eine Aufgabe – in dieser
-Reihenfolge gelesen ergibt sich der komplette Ablauf:
+[ARCHITECTURE.md](ARCHITECTURE.md) verfolgt einen kompletten Lauf Schritt für
+Schritt durch den Code (inkl. der Frage, warum es kein `check.py` gibt). Die
+Kurzübersicht: Jedes Modul ist ein Schritt der Pipeline und hat genau eine
+Aufgabe – in dieser Reihenfolge gelesen ergibt sich der komplette Ablauf:
 
 | Datei | Aufgabe | Einstieg |
 | --- | --- | --- |
