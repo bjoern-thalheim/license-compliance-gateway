@@ -1,0 +1,25 @@
+# Lizenzentscheidungen
+
+Bibliotheken mit Mehrfachlizenzierung (`OR`) erfordern eine dokumentierte
+Entscheidung. Erzeugt am {{ report.generated_at }} mit Policy
+`{{ report.policy_name }}` v{{ report.policy_version }}.
+
+{% set decided = report.components | selectattr("decision") | list %}
+{% if decided %}
+| Bibliothek | Angebot | Gewählt | Begründung | Entschieden von | Datum |
+| --- | --- | --- | --- | --- | --- |
+{% for item in decided | sort(attribute="component.name") %}
+| {{ item.component.display }} | {{ item.normalized_expression }} | {{ item.decision.chosen }} | {{ item.decision.rationale or "-" }} | {{ item.decision.decided_by or "-" }} | {{ item.decision.decided_at or "-" }} |
+{% endfor %}
+{% else %}
+Keine Mehrfachlizenz-Entscheidungen erforderlich.
+{% endif %}
+
+{% set open = report.components | selectattr("needs_decision") | list %}
+{% if open %}
+## Offene Entscheidungen
+
+{% for item in open | sort(attribute="component.name") %}
+- {{ item.component.display }} ({{ item.normalized_expression }})
+{% endfor %}
+{% endif %}

@@ -1,0 +1,32 @@
+# Beispiel-Policy für ein Projekt mit proprietärer Auslieferung.
+# Copyleft ist hier schlicht nicht in allowed_licenses aufgeführt; für ein
+# Open-Source-Projekt nimmt man die entsprechenden Lizenzen einfach mit auf.
+name: example-proprietary
+version: "1"
+
+allowed_licenses:
+  - id: MIT
+  - id: Apache-2.0
+  - id: BSD-2-Clause
+  - id: BSD-3-Clause
+  - id: ISC
+  - id: CC0-1.0
+    requires_notice: false
+    requires_license_text: false
+
+denied_licenses:
+  - AGPL-3.0-only
+  - AGPL-3.0-or-later
+
+# Wie mit unbekannten oder nicht gelisteten Lizenzen umgegangen wird.
+unknown_license_severity: error
+
+# Ausnahmen: Komponenten, die trotz Lizenzbefund erlaubt sind.
+allowed_components: []
+#  - match: pkg:npm/legacy-widget@1.0.0
+#    note: "Interner Fork, Freigabe durch Legal am 2026-01-15."
+
+denied_components: []
+
+require_license_texts: true
+require_attributions: true

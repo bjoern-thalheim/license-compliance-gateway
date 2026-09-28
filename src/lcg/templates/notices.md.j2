@@ -1,0 +1,26 @@
+# Third-Party Notices
+
+Diese Anwendung enthält die folgenden Fremdbibliotheken. Die vollständigen
+Lizenztexte liegen im Verzeichnis `licenses/`.
+
+{% for item in report.components | sort(attribute="component.name") %}
+## {{ item.component.display }}
+
+- Lizenz: {{ item.effective_licenses | join(" AND ") or "unbekannt" }}
+{% if item.normalized_expression and item.decision %}
+- Lizenzangebot: {{ item.normalized_expression }} (Entscheidung: {{ item.decision.chosen }})
+{% endif %}
+{% if item.component.purl %}
+- Package-URL: {{ item.component.purl }}
+{% endif %}
+{% if item.component.homepage %}
+- Homepage: {{ item.component.homepage }}
+{% endif %}
+{% if attributions.get(item.component.key) %}
+
+```
+{{ attributions[item.component.key] }}
+```
+{% endif %}
+
+{% endfor %}
